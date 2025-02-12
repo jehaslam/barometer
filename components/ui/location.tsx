@@ -32,7 +32,7 @@ export function LocationComponent({ globalVariables }: LocationComponentProps) {
       </Text>
       <Text style={styles.info}>
         Altitude: {globalVariables.location && globalVariables.location.altitude !== null ? (
-          `${globalVariables.location.altitude} m / ${convertMetersToFeet(globalVariables.location.altitude)} ft`
+          `${globalVariables.location.altitude.toFixed(2)} m / ${convertMetersToFeet(globalVariables.location.altitude)} ft`
         ) : (
           <ActivityIndicator size="small" color="black" />
         )}

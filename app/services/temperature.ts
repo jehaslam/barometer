@@ -71,3 +71,6 @@ export const getTemperature = async (latitude: number, longitude: number, setGlo
     return null;
   }
 };
+
+// Default export
+export default getTemperature;

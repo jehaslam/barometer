@@ -37,3 +37,6 @@ export const globalVariables: IGlobalVariables = {
   permissions: null,
   nasaData: null,
 };
+
+// Default export
+export default globalVariables;

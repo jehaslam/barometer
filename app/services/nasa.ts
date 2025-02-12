@@ -77,3 +77,6 @@ export const getElevation = async (latitude: number, longitude: number, setGloba
     return null;
   }
 };
+
+// Default export
+export default getElevation;

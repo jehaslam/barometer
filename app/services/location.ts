@@ -1,7 +1,7 @@
 import * as Location from 'expo-location';
 import { IGlobalVariables } from '@/app/variables/global';
 
-export const getLocation = async (setGlobalVariables: React.Dispatch<React.SetStateAction<IGlobalVariables>>) => {
+export const getLocation = async (setGlobalVariables: React.Dispatch<React.SetStateAction<IGlobalVariables>>): Promise<void> => {
   try {
     const { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -39,3 +39,6 @@ export const getLocation = async (setGlobalVariables: React.Dispatch<React.SetSt
     }));
   }
 };
+
+// Default export
+export default getLocation;

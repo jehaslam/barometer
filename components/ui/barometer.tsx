@@ -11,20 +11,6 @@ export function BarometerComponent({ globalVariables }: BarometerComponentProps)
   const temperatureCelsius = globalVariables.weather?.temperature?.toFixed(2) ?? null;
   const temperatureFahrenheit = globalVariables.weather && globalVariables.weather.temperature !== null ? (globalVariables.weather.temperature * 9/5 + 32).toFixed(2) : null;
 
-  // Calculate altitude using the barometric formula
-  const calculateAltitude = (pressure: number, temperature: number) => {
-    const seaLevelPressure = 1013.25; // hPa
-    const tempKelvin = temperature + 273.15; // Convert Celsius to Kelvin
-    const altitude = (tempKelvin / 0.0065) * (1 - Math.pow(pressure / seaLevelPressure, 0.190284));
-    return altitude;
-  };
-
-  const altitudeMeters = globalVariables.pressure !== null && globalVariables.weather !== null && globalVariables.weather.temperature !== null
-    ? calculateAltitude(globalVariables.pressure, globalVariables.weather.temperature)
-    : null;
-
-  const altitudeFeet = altitudeMeters !== null ? (altitudeMeters * 3.28084).toFixed(2) : null;
-
   // Convert pressure from hPa to inHg
   const pressureInHg = globalVariables.pressure !== null ? (globalVariables.pressure * 0.02953).toFixed(2) : null;
 
@@ -36,7 +22,7 @@ export function BarometerComponent({ globalVariables }: BarometerComponentProps)
       </View>
       <Text style={styles.info}>
         Pressure: {globalVariables.pressure !== null ? (
-          `${globalVariables.pressure.toFixed(2)} hPa / ${pressureInHg} Hg`
+          `${globalVariables.pressure.toFixed(2)} hPa / ${pressureInHg} inHg`
         ) : (
           <ActivityIndicator size="small" color="black" />
         )}
@@ -50,14 +36,6 @@ export function BarometerComponent({ globalVariables }: BarometerComponentProps)
           </View>
         ) : temperatureCelsius !== null ? (
           <Text style={styles.infoValue}>{`${temperatureCelsius} °C / ${temperatureFahrenheit} °F`}</Text>
-        ) : (
-          <ActivityIndicator size="small" color="black" />
-        )}
-      </View>
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>Altitude:</Text>
-        {altitudeMeters !== null ? (
-          <Text style={styles.infoValue}>{`${altitudeMeters.toFixed(2)} m / ${altitudeFeet} ft`}</Text>
         ) : (
           <ActivityIndicator size="small" color="black" />
         )}
