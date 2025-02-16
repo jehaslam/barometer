@@ -1,4 +1,5 @@
 import * as Location from 'expo-location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IGlobalVariables } from '@/app/variables/global';
 
 export const getLocation = async (setGlobalVariables: React.Dispatch<React.SetStateAction<IGlobalVariables>>): Promise<void> => {
@@ -21,11 +22,11 @@ export const getLocation = async (setGlobalVariables: React.Dispatch<React.SetSt
     }
 
     const location = await Location.getCurrentPositionAsync({});
-    const newLocation = (location?.coords?.latitude && location?.coords?.longitude && location?.coords?.altitude) ? {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      altitude: location.coords.altitude,
-    } : null;
+    const newLocation = {
+      latitude: location.coords.latitude || 0,
+      longitude: location.coords.longitude || 0,
+      altitude: location.coords.altitude || 0,
+    };
 
     setGlobalVariables(prev => ({
       ...prev,

@@ -2,7 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IGlobalVariables } from '@/app/variables/global';
 import { parseDate } from '../helpers/date';
 
-export const getElevation = async (latitude: number, longitude: number, setGlobalVariables: React.Dispatch<React.SetStateAction<IGlobalVariables>>): Promise<number | null> => {
+export const getElevation = async (
+  latitude: number,
+  longitude: number,
+  setGlobalVariables: React.Dispatch<React.SetStateAction<IGlobalVariables>>
+): Promise<number | null> => {
   try {
     // Check if there is a valid elevation value in AsyncStorage
     const storedData = await AsyncStorage.getItem('nasaelevationdata');
@@ -29,7 +33,6 @@ export const getElevation = async (latitude: number, longitude: number, setGloba
     // Fetch elevation from the USGS Elevation API
     const response = await fetch(`https://epqs.nationalmap.gov/v1/json?x=${longitude}&y=${latitude}&wkid=4326&units=Meters&includeDate=true`);
     const data = await response.json();
-    console.log(data);
 
     if (data && data.value && data.attributes && data.attributes.AcquisitionDate) {
       const elevation = parseFloat(data.value);

@@ -10,4 +10,7 @@ export function parseDate(dateStr: string): Date | null {
   const validMonth = month >= 1 && month <= 12 ? month - 1 : 0;
 
   return new Date(year, validMonth, day);
-};
+}
+
+// Add default export
+export default parseDate;

@@ -1,28 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { globalVariables as initialGlobalVariables, IGlobalVariables } from '@/app/variables/global';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import React, { useEffect } from 'react';
+import { StyleSheet, ScrollView } from 'react-native';
+import { useGlobalVariables } from '@/hooks/useGlobalVariables';
 import { BarometerComponent } from '@/components/ui/barometer';
-import { LocationComponent } from '@/components/ui/location';
+import { GpsComponent } from '@/components/ui/gps';
 import { getPressure } from '@/app/services/pressure';
-import { getLocation } from '@/app/services/location';
+import { getGps } from '@/app/services/gps';
 import { getTemperature } from '@/app/services/temperature';
 import { getElevation } from '@/app/services/nasa';
-import { MaterialIcons } from '@expo/vector-icons';
 import { PermissionsComponent } from '@/components/ui/permissions';
 import { NasaComponent } from '@/components/ui/nasa';
+import { getLocation } from '@/app/services/location';
+import { LocationComponent } from '@/components/ui/location';
 
 export default function HomeScreen() {
-  const [globalVariables, setGlobalVariables] = useState<IGlobalVariables>(initialGlobalVariables);
+  const { globalVariables, setGlobalVariables } = useGlobalVariables();
 
   useEffect(() => {
-    const fetchLocation = async () => {
-      await getLocation(setGlobalVariables);
+    const fetchGps = async () => {
+      await getGps(setGlobalVariables);
     };
 
-    fetchLocation();
+    fetchGps();
     const unsubscribePressure = getPressure(setGlobalVariables);
 
     return () => {
@@ -32,78 +30,56 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const fetchTemperature = async () => {
-      if (globalVariables.location && globalVariables.weather?.temperature === null) {
-        const { latitude, longitude } = globalVariables.location;
+      if (globalVariables.gps && globalVariables.weather?.temperature === null) {
+        const { latitude, longitude } = globalVariables.gps;
         await getTemperature(latitude, longitude, setGlobalVariables);
       }
     };
 
     fetchTemperature();
-  }, [globalVariables.location]);
+  }, [globalVariables.gps]);
 
   useEffect(() => {
     const fetchElevation = async () => {
-      if (globalVariables.location?.latitude && globalVariables.location?.longitude) {
-        const { latitude, longitude } = globalVariables.location;
+      if (globalVariables.gps?.latitude && globalVariables.gps?.longitude) {
+        const { latitude, longitude } = globalVariables.gps;
         await getElevation(latitude, longitude, setGlobalVariables);
       }
     };
 
     fetchElevation();
-  }, [globalVariables.location]);
+  }, [globalVariables.gps]);
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      if (globalVariables.gps?.latitude && globalVariables.gps?.longitude) {
+        const { latitude, longitude } = globalVariables.gps;
+        await getLocation(latitude, longitude, setGlobalVariables);
+      }
+    };
+
+    fetchLocation();
+  }, [globalVariables.gps]);
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#036' }}
-      headerImage={
-        <View style={styles.headerImageContainer}>
-          <MaterialIcons
-            name="cloud"
-            size={310}
-            color="#808080"
-            style={styles.headerImage}
-          />
-          <MaterialIcons
-            name="terrain"
-            size={200}
-            color="#036"
-            style={styles.overlayImage}
-          />
-        </View>
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Sensors</ThemedText>
-      </ThemedView>
-      <PermissionsComponent globalVariables={globalVariables} />
-      <BarometerComponent globalVariables={globalVariables} />
-      <LocationComponent globalVariables={globalVariables} />
-      <NasaComponent globalVariables={globalVariables} />
-    </ParallaxScrollView>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <PermissionsComponent style={styles.card} />
+      <BarometerComponent style={styles.card} />
+      <GpsComponent style={styles.card} />
+      <NasaComponent style={styles.card} />
+      <LocationComponent style={styles.card} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  scrollViewContent: {
+    padding: 16,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  headerImageContainer: {
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerImage: {
-    color: '#57a',
-    left: '-25%',
-  },
-  overlayImage: {
-    position: 'absolute',
-    bottom: 0,
-    left: -20,
+  card: {
+    marginBottom: 20,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    overflow: 'hidden',  // This ensures child components don't overflow the border radius
   },
 });

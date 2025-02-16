@@ -1,32 +1,32 @@
 import React from 'react';
-import { StyleSheet, Text, View, Linking, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { IGlobalVariables } from '@/app/variables/global';
+import { FieldList } from './FieldList';
+import { FieldHeader } from './FieldHeader';
+import { useGlobalVariables } from '@/hooks/useGlobalVariables';
 
 interface PermissionsComponentProps {
-  globalVariables: IGlobalVariables;
+  style?: ViewStyle;
 }
 
-export function PermissionsComponent({ globalVariables }: PermissionsComponentProps) {
-  const openAppSettings = () => {
-    Linking.openSettings();
-  };
+export function PermissionsComponent({ style }: PermissionsComponentProps) {
+  const { globalVariables } = useGlobalVariables();
+  const fields = [
+    {
+      label: 'GPS Permission',
+      value: globalVariables.permissions?.hasGpsPermission ? 'Granted' : 'Denied'
+    }
+  ];
 
-  if (globalVariables.permissions?.hasLocationPermission) {
+  if (globalVariables.permissions?.hasGpsPermission) {
     return null;
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <MaterialIcons name="security" size={24} color="black" />
-        <Text style={styles.title}>Permissions</Text>
-      </View>
-      <Text style={styles.message}>You do not have the right permissions set.</Text>
-      <Text style={styles.message}>Location Permission needs to be enabled to retrieve GPS coordinates, in order to retrieve z-axis and weather information.</Text>
-      <TouchableOpacity onPress={openAppSettings} style={styles.linkContainer}>
-        <Text style={styles.linkText}>Open App Settings</Text>
-      </TouchableOpacity>
+    <View style={[styles.container, style]}>
+      <FieldHeader icon="security" title="Permissions" />
+      <FieldList fields={fields} />
     </View>
   );
 }
@@ -37,30 +37,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderRadius: 10,
     alignItems: 'center',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  message: {
-    fontSize: 16,
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  linkContainer: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#007bff',
-    borderRadius: 5,
-  },
-  linkText: {
-    color: 'white',
-    fontSize: 16,
-  },
+  }
 });

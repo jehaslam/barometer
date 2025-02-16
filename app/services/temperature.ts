@@ -27,7 +27,6 @@ export const getTemperature = async (latitude: number, longitude: number, setGlo
     // Fetch temperature from the Open-Meteo API
     const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
     const data = await response.json();
-    console.log(data);
 
     if (!data.current_weather || data.current_weather.temperature === undefined) {
       setGlobalVariables(prev => ({
